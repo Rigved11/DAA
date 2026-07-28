@@ -79,3 +79,66 @@ if __name__ == "__main__":
     for u, v, weight in mst_edges:
         print(f"{u} -- {v} == Weight: {weight}")
     print(f"Total Weight of MST: {total_cost}")
+
+#easy 
+
+#A class to represent the Union-Find (Disjoint Set) data structure
+class DisjointSet:
+    def __init__(self, vertices):
+        # Initialize each vertex as its own parent
+        self.parent = {v: v for v in vertices}
+
+    # Find the root representative of a vertex (with path compression)
+    def find(self, item):
+        if self.parent[item] == item:
+            return item
+        self.parent[item] = self.find(self.parent[item])
+        return self.parent[item]
+
+    # Union/Merge two sets together
+    def union(self, set1, set2):
+        root1 = self.find(set1)
+        root2 = self.find(set2)
+        if root1 != root2:
+            self.parent[root1] = root2
+            return True
+        return False
+
+def kruskal(vertices, edges):
+    mst = []
+    
+    # Step 1: Sort all edges by weight in ascending order
+    # Each edge is a tuple: (weight, vertex1, vertex2)
+    edges.sort()
+    
+    # Initialize the Disjoint Set tracking structure
+    ds = DisjointSet(vertices)
+    
+    # Step 2: Iterate through the sorted edges
+    for weight, u, v in edges:
+        # Step 3: Check if the nodes are already connected
+        # If union is successful, it means no cycle is formed
+        if ds.union(u, v):
+            mst.append((u, v, weight))
+            
+    return mst
+
+# Example usage:
+if __name__ == "__main__":
+    # Define our graph vertices
+    nodes = ['A', 'B', 'C', 'D']
+    
+    # Define edges: (weight, source, destination)
+    graph_edges = [
+        (1, 'A', 'B'),
+        (3, 'A', 'C'),
+        (4, 'B', 'C'),
+        (2, 'B', 'D'),
+        (5, 'C', 'D')
+    ]
+    
+    minimum_spanning_tree = kruskal(nodes, graph_edges)
+    
+    print("Edges in the Minimum Spanning Tree:")
+    for u, v, weight in minimum_spanning_tree:
+        print(f"{u} - {v} with weight {weight}")
